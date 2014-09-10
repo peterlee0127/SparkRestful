@@ -114,13 +114,7 @@
     
     cell.expiredtimeLabel.adjustsFontSizeToFitWidth=YES;
     cell.tokenLabel.adjustsFontSizeToFitWidth=YES;
-    /*
-     {
-     client = spark;
-     "expires_at" = "2014-05-15T17:18:28.368Z";
-     token = 42fdf88d4c943579f3805817e26d7b39d1ccdfdd;
-     }
-     */
+    
     return cell;
 }
 

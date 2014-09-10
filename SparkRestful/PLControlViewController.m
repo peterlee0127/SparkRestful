@@ -58,7 +58,6 @@
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closekeyboard)];
     tapGesture.numberOfTapsRequired = 1;
     [self.tableView addGestureRecognizer:tapGesture];
-//    self.deviceID.text = @"53ff6d065067544829080687";
     // Do any additional setup after loading the view from its nib.
 }
 -(void)viewWillAppear:(BOOL)animated
