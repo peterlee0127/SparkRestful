@@ -10,7 +10,7 @@
 #import "PLNetworkManager.h"
 #import <MBProgressHUD.h>
 
-@interface PLControlViewController () <PLNetworkManagerDelegate,UITableViewDelegate,UITableViewDataSource>
+@interface PLControlViewController () <PLNetworkManagerDelegate,UITableViewDataSource,UITableViewDelegate>
 
 @property (nonatomic,strong) IBOutlet UITableView *tableView;
 @property (nonatomic,strong) NSArray *headerTitle;
@@ -34,7 +34,7 @@
     self.sendButton = [[UIButton alloc] init];
     self.functionField = [[UITextField alloc] init];
     self.argumentField = [[UITextField alloc] init];
-    self.headerTitle = @[@"Core Information",@"functions",@"variables"];
+    self.headerTitle = @[@"Core Information",@"functions - Click to send action",@"variables"];
     self.functions = @[];
     self.variables = @[];
     [self.sendButton setTitle:@"Send" forState:UIControlStateNormal];
@@ -49,15 +49,7 @@
     [[PLNetworkManager shareInstance] getDeviceInf:self.dict[@"token"]];
     
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Refresh" style:UIBarButtonItemStylePlain target:self action:@selector(refresh)];
-    
-    
-  
-    self.tableView.delegate = self;
-    self.tableView.dataSource = self;
-    
-    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(closekeyboard)];
-    tapGesture.numberOfTapsRequired = 1;
-    [self.tableView addGestureRecognizer:tapGesture];
+                                              
     // Do any additional setup after loading the view from its nib.
 }
 -(void)viewWillAppear:(BOOL)animated
@@ -147,6 +139,7 @@
         }
     }
     cell.textLabel.adjustsFontSizeToFitWidth = YES;
+    cell.selectionStyle = UITableViewStylePlain;
     return cell;
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -223,13 +216,14 @@
 
 #pragma marl - UITableView Delegate
 
-
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if(indexPath.section==0)
-        [tableView deselectRowAtIndexPath:indexPath animated:NO];
-
+    if(indexPath.section==1){
+        NSString *func = self.functions[indexPath.row];
+        self.functionField.text = [func stringByReplacingOccurrencesOfString:@" " withString:@""];
+    }
 }
+
 -(void)getDeviceInfSuccess:(NSDictionary *)dict
 {
 //    NSLog(@"getDeviceInfSuccess:%@",dict);
