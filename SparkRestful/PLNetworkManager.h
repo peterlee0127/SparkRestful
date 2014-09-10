@@ -18,6 +18,7 @@
 +(instancetype) shareInstance;
 -(void) Userlogin:(NSString *) account :(NSString *)password;
 -(void) getDeviceInf:(NSString *) access_token;
+-(void) GetVariableRequest:(NSString *) access_token andDeviceID:(NSString *) deviceID;
 -(void) SentAction:(NSString *) access_token deviceId:(NSString *) deviceID func:(NSString *) func args:(NSString *)arg;
 
 @end
@@ -31,6 +32,8 @@
 -(void) getDeviceInfSuccess:(NSDictionary *) dict;
 -(void) getDeviceInfFail;
 
+-(void) GetVariableRequestSuccess:(NSDictionary *) dict;
+-(void) GetVariableRequestFail;
 
 
 -(void) sentActionSuccess:(NSString *) successString;

@@ -9,6 +9,7 @@
 #import "PLControlViewController.h"
 #import "PLNetworkManager.h"
 #import <MBProgressHUD.h>
+#import "PLRequestViewController.h"
 
 @interface PLControlViewController () <PLNetworkManagerDelegate,UITableViewDataSource,UITableViewDelegate>
 
@@ -34,7 +35,7 @@
     self.sendButton = [[UIButton alloc] init];
     self.functionField = [[UITextField alloc] init];
     self.argumentField = [[UITextField alloc] init];
-    self.headerTitle = @[@"Core Information",@"functions - Click to send action",@"variables"];
+    self.headerTitle = @[@"Core Information",@"functions - Click to send action",@"variables - Click to GetVariableRequest"];
     self.functions = @[];
     self.variables = @[];
     [self.sendButton setTitle:@"Send" forState:UIControlStateNormal];
@@ -48,6 +49,10 @@
     [PLNetworkManager shareInstance].delegate = self;
     [[PLNetworkManager shareInstance] getDeviceInf:self.dict[@"token"]];
     
+    
+    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
+    hud.labelText = @"Loading Device";
+    
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Refresh" style:UIBarButtonItemStylePlain target:self action:@selector(refresh)];
                                               
     // Do any additional setup after loading the view from its nib.
@@ -56,12 +61,10 @@
 {
     [super viewWillAppear:animated];
     
-    self.client=[NSString stringWithFormat:@"client:%@",self.dict[@"client"]];
-    self.expiredtime=[NSString stringWithFormat:@"expires_at:%@",self.dict[@"expires_at"]];
-    self.token=[NSString stringWithFormat:@"token:%@",self.dict[@"token"]];
-    
-   MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.navigationController.view animated:YES];
-   hud.labelText = @"Loading Device";
+    self.client= self.dict[@"client"];
+    self.expiredtime= self.dict[@"expires_at"];
+    self.token= self.dict[@"token"];
+
     [self.tableView reloadData];
 }
 -(void) refresh
@@ -88,7 +91,7 @@
                     }
                     case 1:
                     {
-                        cell.textLabel.text = self.client;
+                        cell.textLabel.text = [NSString stringWithFormat:@"client:%@",self.client];
                         break;
                     }
                     case 2:
@@ -98,12 +101,12 @@
                     }
                     case 3:
                     {
-                        cell.textLabel.text = self.token;
+                        cell.textLabel.text = [NSString stringWithFormat:@"token:%@",self.token];;
                         break;
                     }
                     case 4:
                     {
-                        cell.textLabel.text = self.expiredtime;
+                        cell.textLabel.text = [NSString stringWithFormat:@"expires_at:%@",self.expiredtime];
                         break;
                     }
                     case 5:
@@ -222,6 +225,13 @@
         NSString *func = self.functions[indexPath.row];
         self.functionField.text = [func stringByReplacingOccurrencesOfString:@" " withString:@""];
     }
+    if(indexPath.section==2){
+        PLRequestViewController *requestVC = [[PLRequestViewController alloc] initWithNibName:@"PLRequestViewController" bundle:nil];
+        requestVC.access_token = self.token;
+        requestVC.deviceID = self.deviceID;
+        [self.navigationController pushViewController:requestVC animated:YES];
+        
+    }
 }
 
 -(void)getDeviceInfSuccess:(NSDictionary *)dict
@@ -265,13 +275,13 @@
 // Sent
 -(void) sentActionSuccess:(NSString *)successString
 {
-    [MBProgressHUD hideHUDForView:self.navigationController.view animated:YES];
+    [MBProgressHUD hideAllHUDsForView:self.navigationController.view animated:YES];
     UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Send Success" message:successString delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
     [alert show];
 }
 -(void) sentActionFail:(NSString *)errorString
 {
-    [MBProgressHUD hideHUDForView:self.navigationController.view animated:YES];
+    [MBProgressHUD hideAllHUDsForView:self.navigationController.view animated:YES];
     UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Send fail" message:errorString delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
     [alert show];
 }

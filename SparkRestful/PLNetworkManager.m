@@ -28,7 +28,6 @@
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
 
     [manager.requestSerializer setAuthorizationHeaderFieldWithUsername:account password:password];
-    //https://api.spark.io/v1/access_tokens
     [manager GET:@"https://api.spark.io/v1/access_tokens" parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [self.delegate userLoginSuccess:responseObject];
         
@@ -75,23 +74,34 @@
 
 }
 
+-(void) GetVariableRequest:(NSString *) access_token andDeviceID:(NSString *) deviceID
+{
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    NSString *urlString = [NSString stringWithFormat:@"https://api.spark.io/v1/devices/%@/%@\?access_token=%@",deviceID,@"var",access_token];
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    [manager GET:urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSDictionary *dict = (NSDictionary *)responseObject;
+        [self.delegate GetVariableRequestSuccess:dict];
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [self.delegate GetVariableRequestFail];
 
-    
+        
+    }];
+
+}
 
 -(void) SentAction:(NSString *) access_token deviceId:(NSString *) deviceID func:(NSString *) func args:(NSString *)arg
 {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:access_token,@"access_token",arg,@"args",nil];
     NSString *urlString = [NSString stringWithFormat:@"https://api.spark.io/v1/devices/%@/%@",deviceID,func];
-    manager.requestSerializer = [AFJSONRequestSerializer serializer];
     [manager POST:urlString parameters:dict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        NSLog(@"action response:%@",responseObject);
         if([responseObject[@"error"] isEqualToString:@"Timed out."])
         {
             [self.delegate sentActionFail:[NSString stringWithFormat:@"%@",@"Time out."]];
             return ;
         }
-        
         [self.delegate sentActionSuccess:[NSString stringWithFormat:@"Result:%@",responseObject]];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
