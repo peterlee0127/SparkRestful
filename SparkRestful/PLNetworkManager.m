@@ -17,6 +17,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         shareInstance=[[PLNetworkManager alloc] init];
+
     });
     return shareInstance;
 }
@@ -39,6 +40,7 @@
 -(void) getDeviceInf:(NSString *) access_token
 {
      AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
      NSString *urlString = [NSString stringWithFormat:@"https://api.spark.io/v1/devices/\?access_token=%@",access_token];
      [manager GET:urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
      
@@ -47,6 +49,7 @@
          {
              AFHTTPRequestOperationManager *manager= [AFHTTPRequestOperationManager manager];
              NSString *urlString = [NSString stringWithFormat:@"https://api.spark.io/v1/devices/%@/\?access_token=%@",dict[@"id"],access_token];
+             manager.requestSerializer = [AFJSONRequestSerializer serializer];
              [manager GET:urlString parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
                  NSDictionary *dict = (NSDictionary *)responseObject;
                  if(dict[@"id"]){
@@ -80,8 +83,9 @@
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:access_token,@"access_token",arg,@"args",nil];
     NSString *urlString = [NSString stringWithFormat:@"https://api.spark.io/v1/devices/%@/%@",deviceID,func];
+    manager.requestSerializer = [AFJSONRequestSerializer serializer];
     [manager POST:urlString parameters:dict success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"action response:%@",responseObject);
+//        NSLog(@"action response:%@",responseObject);
         if([responseObject[@"error"] isEqualToString:@"Timed out."])
         {
             [self.delegate sentActionFail:[NSString stringWithFormat:@"%@",@"Time out."]];
