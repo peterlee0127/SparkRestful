@@ -1,4 +1,4 @@
 SparkRestful
 ============
 
-iOS App for Spark Device
+Design for iOS using SparkCore Cloud API
