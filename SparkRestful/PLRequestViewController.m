@@ -25,8 +25,13 @@
     self.title = @"GetVariableRequest";
     self.manager = [[PLNetworkManager alloc] init];
     self.manager.delegate = self;
-    [self startGetRequest];
     // Do any additional setup after loading the view from its nib.
+}
+-(void) viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+
+    [self startGetRequest];
 }
 -(void) startGetRequest
 {
@@ -35,7 +40,7 @@
 
 -(void)GetVariableRequestSuccess:(NSDictionary *)dict
 {
-    NSLog(@"%@",dict);
+//    NSLog(@"%@",dict);
     [self performSelector:@selector(startGetRequest) withObject:nil afterDelay:5];
     
     self.resultLabel.text = [NSString stringWithFormat:@"%@",dict[@"result"]];
@@ -43,6 +48,8 @@
 -(void)GetVariableRequestFail
 {
     NSLog(@"%s",__PRETTY_FUNCTION__);
+    
+    [self performSelector:@selector(startGetRequest) withObject:nil afterDelay:2];
 }
 
 - (void)didReceiveMemoryWarning {

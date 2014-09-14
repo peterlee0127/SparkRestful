@@ -80,6 +80,8 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"SparkCore"];
     if(!cell){
         cell = [[UITableViewCell alloc] init];
+        
+        cell.textLabel.textColor = [UIColor colorWithWhite:0.223 alpha:1.000];
         switch (indexPath.section) {
             case 0:
             {
